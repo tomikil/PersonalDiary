@@ -4,7 +4,7 @@ from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, TemplateView
+from django.views.generic import CreateView, UpdateView, TemplateView, DetailView
 
 from config.settings import EMAIL_HOST_USER
 from users.forms import UserRegisterForm, UserProfileForm, PasswordRecoveryForm
@@ -33,6 +33,11 @@ class UserCreateView(CreateView):
         )
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Профиль'
+        return context
+
 
 def email_verification(request, token):
     user = get_object_or_404(User, token=token)
@@ -49,13 +54,28 @@ class ProfileView(UpdateView):
     def get_object(self, queryset=None):
         return self.request.user
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Профиль'
+        return context
+
 
 class RegisterMessageView(TemplateView):
     template_name = 'users/register_message.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Профиль'
+        return context
+
 
 class PasswordRecoveryMessageView(TemplateView):
     template_name = 'users/password_recovery_message.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Профиль'
+        return context
 
 
 class PasswordRecoveryView(TemplateView):
@@ -81,3 +101,8 @@ class PasswordRecoveryView(TemplateView):
             [user.email]
         )
         return HttpResponseRedirect('/users/password_recovery_message/')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Восстановление пароля'
+        return context
